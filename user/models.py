@@ -3,7 +3,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.db import models
 
 class MyAccountManager(BaseUserManager):
     def create_user(self,email,username, password=None, **extra_fields):
@@ -60,3 +60,8 @@ class Account(AbstractBaseUser,PermissionsMixin):
         verbose_name = 'Account'
         verbose_name_plural = 'Accounts'
 
+
+
+class Member(models.Model):
+  firstname = models.CharField(max_length=255)
+  lastname = models.CharField(max_length=255)
