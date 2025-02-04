@@ -25,6 +25,6 @@ env
 /env/
 venv
 /venv/
-.env
+
 .venv
 .vscode
