@@ -4,7 +4,7 @@ from django.core.mail import EmailMessage
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -135,7 +135,7 @@ class PasswordResetRequestView(APIView):
     
 
 class PasswordResetConfirmView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     def post(self, request, uidb64, token):
         serializer = PasswordResetConfirmSerializer(data=request.data, context={'uidb64': uidb64, 'token': token})
         if serializer.is_valid():
