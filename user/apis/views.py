@@ -117,7 +117,7 @@ class PasswordResetRequestView(APIView):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        reset_link = f"http://127.0.0.1:8000/reset-password/{uid}/{token}/"
+        reset_link = f"https://alex-medlearn.netlify.app/password-reset-confirm/{uid}/{token}/"
 
         try:
             email_message = EmailMessage(
