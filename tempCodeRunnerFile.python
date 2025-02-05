@@ -1,0 +1,24 @@
+import requests
+import json
+
+# البيانات اللي هتبعتها
+data = {
+    "email": "ramaalh7a4822yek762000@gmail.com",
+    "username": "rama alh8ayek",
+    "phone_number": "+963968693761",
+    "password": "1234",
+    "country": "SY",
+    "birth_date": "2000-1-1"
+}
+
+# العنوان اللي هنبعت عليه الطلب
+url = "https://ahmedmahmoud10.pythonanywhere.com/register/"
+
+# إرسال الـ POST request
+response = requests.post(url, json=data)
+
+# التحقق من الرد
+if response.status_code == 201:
+    print("done", response.json())
+else:
+    print(f"حصل خطأ. الحالة: {response.status_code}, الرسالة: {response.text}")
