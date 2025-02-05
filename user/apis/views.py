@@ -23,7 +23,7 @@ class RegistrationView(APIView):
             user.save()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            activation_link = f'https://alex-medlearn.netlify.app/activate/{uid}/tk:{token}'
+            activation_link = f'https://alex-medlearn.netlify.app/activate/{uid}/{token}'
             email = user.email
 
             sent_email = EmailMessage(
