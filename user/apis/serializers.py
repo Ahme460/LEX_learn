@@ -47,14 +47,14 @@ class SignInSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
-        device_id=data.get('device_id',None)
+        device_id=data.get('device_id')
 
         if not email or not password:
             raise serializers.ValidationError("Both email and password are required")
 
         if not device_id:
-            raise ValueError("device_id is required")
-        
+            raise serializers.ValidationError({"device_id": "This field is required."})
+
         user = authenticate(email=email, password=password)
         if not user:
             raise AuthenticationFailed("Invalid credentials or user does not exist")
