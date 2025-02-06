@@ -1,6 +1,7 @@
 import pycountry
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
+import uuid
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
@@ -62,6 +63,10 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
 
 
-class Member(models.Model):
-  firstname = models.CharField(max_length=255)
-  lastname = models.CharField(max_length=255)
+class UserDevice(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    device_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    user_agent = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    

@@ -5,36 +5,49 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
-
-from ..models import Account
+from django.core.mail import EmailMessage
+from django.conf import settings
+from ..models import Account,UserDevice
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    device_id=serializers.CharField(write_only=True,required=True)
 
     class Meta:
         model = Account
-        fields = [ 'email', 'username', 'phone_number', 'country', 'birth_date', 'password']
+        fields = [ 'email', 'username', 'phone_number', 'country', 'birth_date', 'password',"device_id"]
         
-
+        
     def create(self, validated_data):
+        device_id = validated_data.pop('device_id')
         password = validated_data.pop('password', None)
         user = Account.objects.create_user(**validated_data)
         if password:
             user.set_password(password)
-        
         user.save()
-
+        if  UserDevice.objects.get(device_id=device_id).DoesNotExist:
+            seasion_user=UserDevice.objects.create(
+                user=user,
+            device_id=device_id
+            )
+            seasion_user.save()
+        else:
+            raise ValueError({"eroor":"this device is exist"})
         return user
+
     
 
 class SignInSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+    device_id=serializers.CharField(write_only=True,required=True)
+    
 
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
+        device_id=data.get('device_id')
 
         if not email or not password:
             raise serializers.ValidationError("Both email and password are required")
@@ -45,6 +58,18 @@ class SignInSerializer(serializers.Serializer):
 
         if not user.is_active:
             raise AuthenticationFailed("User account is deactivated")
+
+        if not UserDevice.objects.filter(user=user, device_id=device_id).exists():
+            user.is_active = False  # تعطيل الحساب
+            user.save()
+            sent_email = EmailMessage(
+                subject='Disable your account',
+                body=f'Disable account You are trying to access your account from an unauthorized device',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[email]
+            )
+            raise ValidationError({"code": "unauthorized_device", "error": "You are trying to access your account from an unauthorized device"})
+
         data['user'] = user
         return data
 
