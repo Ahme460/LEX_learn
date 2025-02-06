@@ -26,7 +26,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if password:
             user.set_password(password)
         user.save()
-        if  UserDevice.objects.get(device_id=device_id).DoesNotExist:
+        if not UserDevice.objects.filter(device_id=device_id).exists():
             seasion_user=UserDevice.objects.create(
                 user=user,
             device_id=device_id
