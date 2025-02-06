@@ -75,7 +75,7 @@ def getResponseToken(user):
 
 
 class SignInView(APIView):
-
+    permission_classes=[AllowAny]
     def post(self, request, *args, **kwargs):
         serializer = SignInSerializer(data=request.data)
         
