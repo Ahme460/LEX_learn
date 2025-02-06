@@ -52,6 +52,9 @@ class SignInSerializer(serializers.Serializer):
         if not email or not password:
             raise serializers.ValidationError("Both email and password are required")
 
+        if not device_id:
+            raise ValueError("device_id is required")
+        
         user = authenticate(email=email, password=password)
         if not user:
             raise AuthenticationFailed("Invalid credentials or user does not exist")
