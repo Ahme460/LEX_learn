@@ -41,37 +41,40 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class SignInSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-    device_id=serializers.CharField(write_only=True,required=True)
-    
+    device_id = serializers.CharField(write_only=True, required=True)  # تأكد أن required=True
 
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
-        device_id=data.get('device_id')
+        device_id = data.get('device_id')
 
+        # التحقق من إدخال البيانات
         if not email or not password:
-            raise serializers.ValidationError("Both email and password are required")
+            raise serializers.ValidationError({"error": "Both email and password are required"})
 
         if not device_id:
             raise serializers.ValidationError({"device_id": "This field is required."})
 
         user = authenticate(email=email, password=password)
         if not user:
-            raise AuthenticationFailed("Invalid credentials or user does not exist")
+            raise AuthenticationFailed({"code": "invalid_credentials", "error": "Invalid credentials or user does not exist"})
 
         if not user.is_active:
-            raise AuthenticationFailed("User account is deactivated")
+            raise AuthenticationFailed({"code": "deactivated_account", "error": "User account is deactivated"})
 
         if not UserDevice.objects.filter(user=user, device_id=device_id).exists():
             user.is_active = False  # تعطيل الحساب
             user.save()
+
             sent_email = EmailMessage(
                 subject='Disable your account',
-                body=f'Disable account You are trying to access your account from an unauthorized device',
+                body='You are trying to access your account from an unauthorized device.',
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[email]
             )
-            raise ValidationError({"code": "unauthorized_device", "error": "You are trying to access your account from an unauthorized device"})
+            sent_email.send(fail_silently=True)  # تأكد من إرسال الإيميل
+
+            raise ValidationError({"code": "unauthorized_device", "error": "You are trying to access your account from an unauthorized device."})
 
         data['user'] = user
         return data
