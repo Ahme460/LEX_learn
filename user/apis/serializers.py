@@ -47,7 +47,7 @@ class SignInSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
-        device_id=data.get('device_id')
+        device_id=data.get('device_id',None)
 
         if not email or not password:
             raise serializers.ValidationError("Both email and password are required")
