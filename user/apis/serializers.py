@@ -8,7 +8,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.core.mail import EmailMessage
 from django.conf import settings
 from ..models import Account,UserDevice
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.mail import send_mail
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -38,46 +39,45 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     
 
-class SignInSerializer(serializers.Serializer):
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-    device_id = serializers.CharField(write_only=True, required=True)  # تأكد أن required=True
+    device_id = serializers.CharField(write_only=True, required=True)
 
-    def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
-        device_id = data.get('device_id')
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        device_id = attrs.get('device_id')
 
-        # التحقق من إدخال البيانات
         if not email or not password:
-            raise serializers.ValidationError({"error": "Both email and password are required"})
+            raise serializers.ValidationError("Both email and password are required")
 
-        if not device_id:
-            raise serializers.ValidationError({"device_id": "This field is required."})
-
+        # التحقق من المستخدم
         user = authenticate(email=email, password=password)
         if not user:
-            raise AuthenticationFailed({"code": "invalid_credentials", "error": "Invalid credentials or user does not exist"})
+            raise AuthenticationFailed("Invalid credentials or user does not exist")
 
         if not user.is_active:
-            raise AuthenticationFailed({"code": "deactivated_account", "error": "User account is deactivated"})
+            raise AuthenticationFailed("User account is deactivated")
 
+        # التحقق من الـ device_id
         if not UserDevice.objects.filter(user=user, device_id=device_id).exists():
             user.is_active = False  # تعطيل الحساب
             user.save()
 
-            sent_email = EmailMessage(
-                subject='Disable your account',
-                body='You are trying to access your account from an unauthorized device.',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[email]
+            # إرسال بريد إلكتروني
+            send_mail(
+                'Your account has been disabled',
+                'You are trying to access your account from an unauthorized device.',
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
             )
-            sent_email.send(fail_silently=True)  # تأكد من إرسال الإيميل
 
-            raise ValidationError({"code": "unauthorized_device", "error": "You are trying to access your account from an unauthorized device."})
+            raise serializers.ValidationError({"code": "unauthorized_device", "error": "You are trying to access your account from an unauthorized device."})
 
-        data['user'] = user
-        return data
+        # إذا كانت البيانات صحيحة، توليد التوكن
+        return super().validate(attrs)
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):

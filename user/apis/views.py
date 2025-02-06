@@ -8,10 +8,10 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 from ..models import Account
 from .serializers import (PasswordResetConfirmSerializer,
-                          RegistrationSerializer, SignInSerializer)
+                          RegistrationSerializer, CustomTokenObtainPairSerializer)
 
 
 class RegistrationView(APIView):
@@ -74,17 +74,10 @@ def getResponseToken(user):
     }, status=status.HTTP_200_OK)
 
 
-class SignInView(APIView):
-
-    def post(self, request, *args, **kwargs):
-        serializer = SignInSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            return getResponseToken(user)
-
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    
+    
 
 class LogoutView(APIView):
     def post(self, request):
