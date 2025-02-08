@@ -39,8 +39,6 @@ class Test(models.Model):
     def totle_question(self):
         all_question=QuestionBank.objects.filter(id=self.id).count()
         return all_question
- 
-
 
 class QuestionBank(models.Model):
     packed_question=models.ForeignKey(Test,on_delete=models.CASCADE)
