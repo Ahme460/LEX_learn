@@ -11,4 +11,6 @@ class AccountAdmin(admin.ModelAdmin):
     readonly_fields = ('date_joined', 'last_login')  
     ordering = ['-date_joined']
     
-admin.site.register(UserDevice)
+admin.site.register(UserDevice)    
+admin.site.register(Contact)
+
