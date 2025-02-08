@@ -70,3 +70,11 @@ class UserDevice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     
+class Contact(models.Model):
+    email_1=models.CharField(max_length=500)
+    email_2=models.CharField(max_length=500)
+    telegram_link=models.URLField(max_length=500)
+    facebook_kink=models.URLField(max_length=500)
+    phone_number=models.CharField(max_length=100)
+    
+

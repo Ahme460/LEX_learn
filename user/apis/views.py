@@ -9,10 +9,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from ..models import Account
+from ..models import Account,Contact
 from .serializers import (PasswordResetConfirmSerializer,
-                          RegistrationSerializer, SignInSerializer)
-
+                          RegistrationSerializer, SignInSerializer,Support)
+from rest_framework.generics import ListAPIView
 
 class RegistrationView(APIView):
     def post(self, request, *args, **kwargs):
@@ -150,3 +150,13 @@ class PasswordResetConfirmView(APIView):
                 {'error': 'Invalid data'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+
+class View_Support(ListAPIView):
+    permission_classes=[AllowAny]
+    queryset=Contact.objects.all()
+    serializer_class=Support
+    
+    
+
