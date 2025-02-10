@@ -49,7 +49,7 @@ class BookCall(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} - Book Access - {self.System} - Approved: {self.is_approved}"
+        return f"{self.user} - Book Access - {self.book.title} - Approved: {self.is_approved}"
 
 
     
