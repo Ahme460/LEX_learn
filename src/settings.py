@@ -16,8 +16,9 @@ SECRET_KEY = 'django-insecure-g8v@+6i@2cz4j-ce+knphp_y4d!87$v8gq-i3ip)egnn+-#(t(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ahmedmahmoud10.pythonanywhere.com"]
+#ALLOWED_HOSTS = ["ahmedmahmoud10.pythonanywhere.com"]
 
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist', 
     'user',
+    'dashpord',
      'corsheaders',
 ]
 
@@ -124,6 +126,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
