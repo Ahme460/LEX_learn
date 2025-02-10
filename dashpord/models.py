@@ -36,6 +36,8 @@ class Book(models.Model):
     image=models.FileField(upload_to='img_books')
     author = models.CharField(max_length=100)
     pdf_file = models.FileField(upload_to='books/')
+    university=models.CharField(max_length=500,null=True)
+    release_date=models.DateField(null=True)
     requires_approval = models.BooleanField(default=True)
     
     def __str__(self):

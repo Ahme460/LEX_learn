@@ -18,7 +18,7 @@ class System_study(serializers.ModelSerializer):
 class Books_System_selizer(serializers.ModelSerializer):
     class Meta:
         model= Book
-        fields=["id","System","title","image","author"]
+        fields=["id","System","title","image","author","university","release_date"]
         
     
 class Order_Book_selizer(serializers.ModelSerializer):
