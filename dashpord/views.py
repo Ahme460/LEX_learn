@@ -59,9 +59,39 @@ class BookFileView(APIView):
         if not book_call.exists():
             raise NotFound(detail={"error": "No book calls found for this user."})
         else:
-            books=list(book_call.values("book__id", "book__title", "book__author","book__image","book__pdf_file"))
+            books=list(book_call.values("book__id", "book__title", "book_System__name","book__author","book__image","book__pdf_file"))
             return Response({"books":books},status=status.HTTP_200_OK)
         
-            
-            
+ 
 
+class Lecture_Viewset(ListAPIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class=Lecture_Sleizer
+    def get_queryset(slef):
+        id_system=slef.kwargs.get('id')
+        Lectures=Lecture.objects.filter(System__id=id_system)
+        Lecture_order=LectureCall.objects.values_list("lecture__id",flat=True)
+        Lectures=Lectures.exclude(id__in=Lecture_order)
+        return Lectures
+
+
+class Create_Order_Lecture(CreateAPIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class=Order_Lecture_selizer
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request)
+    
+ 
+ 
+class Lecture_data_view(APIView):
+    permission_classes = [IsAuthenticated]  
+    def get(self, request):
+        
+        book_call=BookCall.objects.filter(user=request.user,is_approved=True)
+        if not book_call.exists():
+            raise NotFound(detail={"error": "No book calls found for this user."})
+        else:
+            books=list(book_call.values("lecture__id", "lecture__title", "","book__image","book__pdf_file"))
+            return Response({"books":books},status=status.HTTP_200_OK)
+        

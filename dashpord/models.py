@@ -19,6 +19,7 @@ class System(models.Model):
 class Lecture(models.Model):
     System = models.ForeignKey(System, on_delete=models.CASCADE,related_name='lecture')
     title = models.CharField(max_length=255)
+    img_lecture=models.FileField(upload_to="img_lecture/")
     teacher = models.CharField(max_length=100)
     video_url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,9 +44,8 @@ class Book(models.Model):
 
 class BookCall(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    System = models.ForeignKey(System, on_delete=models.CASCADE)
     book=models.ForeignKey(Book, on_delete=models.CASCADE)
-    is_approved = models.BooleanField(default=False)  # هل تمت الموافقة؟
+    is_approved = models.BooleanField(default=False)  
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -55,12 +55,12 @@ class BookCall(models.Model):
     
 class LectureCall(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    System = models.ForeignKey(System, on_delete=models.CASCADE)  # المادة
-    is_approved = models.BooleanField(default=False)  # هل تمت الموافقة؟
+    lecture=models.ForeignKey(Lecture,on_delete=models.CASCADE,null=True)
+    is_approved = models.BooleanField(default=False)  
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} - Lecture Access - {self.subject} - Approved: {self.is_approved}"
+        return f"{self.user} - Lecture Access - {self.lecture.title} - Approved: {self.is_approved}"
 
 
 

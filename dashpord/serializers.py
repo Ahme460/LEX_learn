@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.exceptions import NotFound
 
+
 class Grou_study(serializers.ModelSerializer):
     class Meta:
         model= StudyGroup
@@ -23,24 +24,15 @@ class Books_System_selizer(serializers.ModelSerializer):
 class Order_Book_selizer(serializers.ModelSerializer):
     class Meta:
         model=BookCall
-        fields=["System","book"]
+        fields=["book"]
     def validate(self, attrs):
-        system_id = attrs.get("System").id
-        book_id = attrs.get("book").id
-        print(system_id)
+        book = attrs.get("book")
+        book_id = book.id
         
-
-        if not isinstance(system_id, int):  
-            raise serializers.ValidationError({"System": "System must be an ID (integer)."})
-
         if not isinstance(book_id, int): 
-            raise serializers.ValidationError({"book": "Book must be an ID (integer)."})
-
-        try:
-            system = System.objects.get(id=system_id)
-        except System.DoesNotExist:
-            raise NotFound(detail={"error": "System not found."})
-
+            raise serializers.ValidationError(
+                {"book": "Book must be an ID (integer)."}
+                )
         try:
             book = Book.objects.get(id=book_id)
         except Book.DoesNotExist:
@@ -52,7 +44,36 @@ class Order_Book_selizer(serializers.ModelSerializer):
        user=self.context['request'].user
        validated_data['user'] = user
        return  super().create(validated_data)
-    
-        
-        
 
+
+class Lecture_Sleizer(serializers.ModelSerializer):
+    class Meta:
+        model=Lecture
+        exclude=('video_url')
+               
+    
+class Order_Lecture_selizer(serializers.ModelSerializer):
+    class Meta:
+        model=LectureCall
+        fields=["lecture"]
+        
+        
+    def validate(self, attrs):
+        lecture_id = attrs.get("lecture").id
+        if not isinstance(lecture_id, int): 
+            raise serializers.ValidationError(
+            {
+            "lecture":"lecture must be an ID (integer)."
+            })
+        try:
+            lecture = Lecture.objects.get(id=lecture_id)
+        except Lecture.DoesNotExist:
+            raise NotFound(
+                detail={"error": "lecture not found."}
+                )
+        return attrs
+
+    def create(self, validated_data):
+       user=self.context['request'].user
+       validated_data['user'] = user
+       return  super().create(validated_data)
