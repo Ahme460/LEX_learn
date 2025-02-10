@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from django.core.mail import EmailMessage
 from django.conf import settings
-from ..models import Account,UserDevice
+from ..models import *
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -114,3 +114,9 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user.save()
         return user
 
+
+
+class Support(serializers.ModelSerializer):
+    class Meta:
+        model=Contact
+        fields="__all__"
