@@ -93,10 +93,15 @@ class Lecture_data_view(APIView):
     permission_classes = [IsAuthenticated]  
     def get(self, request):
         
-        book_call=BookCall.objects.filter(user=request.user,is_approved=True)
-        if not book_call.exists():
+        lectures_call=LectureCall.objects.filter(user=request.user,is_approved=True)
+        if not lectures_call.exists():
             raise NotFound(detail={"error": "No book calls found for this user."})
         else:
-            books=list(book_call.values("lecture__id", "lecture__title", "","book__image","book__pdf_file"))
-            return Response({"books":books},status=status.HTTP_200_OK)
+            lectures=list(lectures_call.values("lecture__id", "lecture__title", 
+                                        "lecture__img_lecture","lecture__teacher",
+                                        "lecture__video_url","lecture__created_at"))
+            for lecture in lectures:
+                lecture['lecture__img_lecture']=request.build_absolute_uri('/media/'+lecture['lecture__img_lecture'])if lecture['lecture__img_lecture'] else None
+
+            return Response({"books":lectures},status=status.HTTP_200_OK)
         
