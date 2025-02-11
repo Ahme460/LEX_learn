@@ -59,13 +59,12 @@ class Order_Lecture_selizer(serializers.ModelSerializer):
         
         
     def validate(self, attrs):
-        lecture_id = attrs.get("lecture").id
-        
-        if not lecture_id:
+        lecture = attrs.get("lecture")
+        if not lecture:
             raise NotFound(
                 detail="not id lecture"
             )
-        
+        lecture_id = getattr(lecture,"id",None)
         if not isinstance(lecture_id, int): 
             raise serializers.ValidationError(
             {
