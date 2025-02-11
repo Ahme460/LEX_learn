@@ -95,7 +95,7 @@ class Lecture_data_view(APIView):
         
         lectures_call=LectureCall.objects.filter(user=request.user,is_approved=True)
         if not lectures_call.exists():
-            raise NotFound(detail={"error": "No book calls found for this user."})
+            raise NotFound(detail={"error": "No lectures calls found for this user."})
         else:
             lectures=list(lectures_call.values("lecture__id", "lecture__title", 
                                         "lecture__img_lecture","lecture__teacher",
