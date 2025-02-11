@@ -59,10 +59,17 @@ class BookFileView(APIView):
         if not book_call.exists():
             raise NotFound(detail={"error": "No book calls found for this user."})
         else:
-            books=list(book_call.values("book__id", "book__title", "book__System__name","book__author","book__image","book__pdf_file","book__release_date","book__university"))
-            return Response({"books":books},status=status.HTTP_200_OK)
-        
- 
+            books = list(book_call.values(
+                "book__id", "book__title", "book__System__name", "book__author",
+                "book__image", "book__pdf_file", "book__release_date", "book__university"
+            ))
+
+            # تحويل المسارات إلى روابط كاملة
+            for book in books:
+                book["book__image"] = request.build_absolute_uri('/media/' + book["book__image"]) if book["book__image"] else None
+                book["book__pdf_file"] = request.build_absolute_uri('/media/' + book["book__pdf_file"]) if book["book__pdf_file"] else None
+
+            return Response({"books": books}, status=status.HTTP_200_OK)
 
 class Lecture_Viewset(ListAPIView):
     permission_classes=[IsAuthenticated]
