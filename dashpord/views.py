@@ -103,5 +103,5 @@ class Lecture_data_view(APIView):
             for lecture in lectures:
                 lecture['lecture__img_lecture']=request.build_absolute_uri('/media/'+lecture['lecture__img_lecture'])if lecture['lecture__img_lecture'] else None
 
-            return Response({"books":lectures},status=status.HTTP_200_OK)
+            return Response({"lectures":lectures},status=status.HTTP_200_OK)
         
