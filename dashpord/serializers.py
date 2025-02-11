@@ -49,7 +49,7 @@ class Order_Book_selizer(serializers.ModelSerializer):
 class Lecture_Sleizer(serializers.ModelSerializer):
     class Meta:
         model=Lecture
-        exclude=('video_url')
+        exclude=('video_url',)
                
     
 class Order_Lecture_selizer(serializers.ModelSerializer):
