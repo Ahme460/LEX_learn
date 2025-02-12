@@ -105,3 +105,15 @@ class Lecture_data_view(APIView):
 
             return Response({"lectures":lectures},status=status.HTTP_200_OK)
         
+        
+        
+class Delete_user(APIView):
+    def delete(request):
+        try:
+            user=request.user
+            user=Account.objects.get(id=user.id)
+            user.delete()
+            return Response({"delete_account":" done"},status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"eroor":str(e)},status=status.HTTP_400_BAD_REQUEST)
+            
