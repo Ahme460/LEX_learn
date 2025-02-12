@@ -12,6 +12,6 @@ urlpatterns = [
     path("lectuers_system/<int:id>/", Lecture_Viewset.as_view(), name="Lecture_Viewset"),
     path("create_order_lecture/", Create_Order_Lecture.as_view(), name="Create_Order_Lecture"),
     path("lecture_data_view/", Lecture_data_view.as_view(), name="Lecture_data_view"),
-      path('delete-user/', Delete_user.as_view(), name='delete-user'),
+    path('delete-user/', Delete_user.as_view(), name='delete-user'),
     
 ]

@@ -108,7 +108,7 @@ class Lecture_data_view(APIView):
         
         
 class Delete_user(APIView):
-    def delete(request):
+    def delete(self,request):
         try:
             user=request.user
             user=Account.objects.get(id=user.id)
